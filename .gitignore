@@ -1,0 +1,89 @@
+# ============================================
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ============================================
+# PyTorch / Deep Learning
+# ============================================
+*.pth
+*.pth.tar
+*.pth.tar-*
+checkpoint/
+checkpoints/
+*.ckpt
+
+# ============================================
+# Project Specific
+# ============================================
+# Model outputs & logs
+output/
+results/
+*.log
+*.csv
+
+# Tensorboard logs
+tensorboard/
+runs/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# ============================================
+# Datasets (user-provided, do not commit)
+# ============================================
+data/
+datasets/
+
+# ============================================
+# IDE / Editor
+# ============================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# OS
+# ============================================
+.DS_Store
+Thumbs.db
+
+# ============================================
+# Jupyter Notebook
+# ============================================
+.ipynb_checkpoints/
+*.ipynb
+
+# ============================================
+# Environment
+# ============================================
+.env
+.venv
+env/
+venv/
+ENV/
+envisioned_classes/
+openai/

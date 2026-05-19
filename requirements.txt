@@ -1,0 +1,54 @@
+# ============================================================
+# TRIDENT: Leveraging LLMs for OOD Detection (PyTorch)
+# 
+# NOTE:
+#   1. This project requires Dassl.pytorch as the training framework.
+#      Install it first:  pip install -e Dassl.pytorch/
+#   2. The `clip` package is a local module under ./clip/, NOT the 
+#      PyPI package. Do NOT install it via pip.
+#   3. PyTorch version should match your CUDA version. The versions 
+#      below are tested with CUDA 12.1. Adjust accordingly.
+# ============================================================
+
+# ---------- Deep Learning Framework ----------
+torch>=2.0.0
+torchvision>=0.15.0
+
+# ---------- Vision-Language Models ----------
+transformers>=4.30.0
+timm>=0.9.0
+
+# ---------- LLM APIs ----------
+openai>=1.0.0
+fastapi-poe>=0.0.44
+
+# ---------- Scientific Computing ----------
+numpy>=1.23.0
+scipy>=1.10.0
+scikit-learn>=1.2.0
+pandas>=1.5.0
+
+# ---------- Visualization ----------
+matplotlib>=3.5.0
+seaborn>=0.12.0
+Pillow>=9.0.0
+
+# ---------- Utilities ----------
+tqdm>=4.65.0
+ftfy
+regex
+python-dotenv>=1.0.0
+certifi
+requests
+yacs
+gdown
+tabulate
+future
+
+# ---------- Tensorboard (optional, for Dassl logging) ----------
+tensorboard>=2.13.0
+
+# ---------- Dev tools (from Dassl.pytorch) ----------
+# flake8==3.7.9
+# yapf==0.29.0
+# isort==4.3.21
