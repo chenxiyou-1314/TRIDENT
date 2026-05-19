@@ -64,8 +64,8 @@ Out-of-Distribution (OOD) detection aims to identify inputs that do not belong t
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Ship30.git
-cd Ship30
+git clone https://github.com/chenxiyou-1314/TRIDENT.git
+cd TRIDENT
 ```
 
 ### Step 2: Install Dassl Framework
