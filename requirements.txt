@@ -15,7 +15,10 @@ torch>=2.0.0
 torchvision>=0.15.0
 
 # ---------- Vision-Language Models ----------
-transformers>=4.30.0
+# NOTE: keep transformers < 5.0. v5 is a major rewrite that breaks the
+# CLIPModel / AlignModel / GroupViTModel / AltCLIPModel imports used
+# in utils/train_eval_util.py and utils/detection_util.py.
+transformers>=4.30.0,<5.0.0
 timm>=0.9.0
 
 # ---------- LLM APIs ----------
