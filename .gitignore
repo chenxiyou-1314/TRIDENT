@@ -53,12 +53,23 @@ runs/
 
 # ============================================
 # Dataset DATA (user-provided images, do not commit)
-# NOTE: only ignore raw data under data/.
-# The `datasets/` CODE package (Dassl dataset registrations)
-# and `envisioned_classes/` (pre-generated LLM label JSONs)
-# MUST be committed for reproducibility.
+# NOTE: ignore everything under data/ EXCEPT the fixed ID/OOD
+# class split files (pkl / id_classes.json) — they are part of
+# the experimental protocol and MUST be committed.
+# The `datasets/` CODE package and `envisioned_classes/`
+# (pre-generated LLM label JSONs) must also be committed.
 # ============================================
-data/
+data/*
+!data/Boat-14/
+!data/Boat-14/id_classes.json
+!data/CUB-100/
+!data/CUB-100/selected_100_classes.pkl
+!data/Stanford-Cars-98/
+!data/Stanford-Cars-98/selected_98_classes.pkl
+!data/Food-50/
+!data/Food-50/selected_50_classes.pkl
+!data/Oxford-Pet-18/
+!data/Oxford-Pet-18/selected_18_classes.pkl
 
 # ============================================
 # IDE / Editor

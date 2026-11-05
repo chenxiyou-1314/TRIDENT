@@ -99,13 +99,20 @@ class Boat29_14(Boat29):
         super().__init__(root, split=split, transform=transform, target_transform=target_transform, download=download)
 
         selected_classes_file = os.path.join('data', 'Boat-14', 'selected_14_classes.pkl')
-        if os.path.exists(selected_classes_file):
+        id_classes_json = os.path.join('data', 'Boat-14', 'id_classes.json')
+        if os.path.exists(id_classes_json):
+            import json as _json
+            with open(id_classes_json) as f:
+                selected_classes = _json.load(f)['id_classes']
+        elif os.path.exists(selected_classes_file):
             with open(selected_classes_file, 'rb') as f:
                 selected_classes = pickle.load(f)
         else:
-            selected_classes = random.sample(self.classes, 14)
-            with open(selected_classes_file, 'wb') as f:
-                pickle.dump(selected_classes, f)
+            raise FileNotFoundError(
+                'data/Boat-14/id_classes.json not found. '
+                'The 14 ID classes must come from the documented fixed split, '
+                'not from random sampling.'
+            )
 
         selected_classes = selected_classes if id else [cls for cls in self.classes if cls not in selected_classes]
         selected_ood_classes = [cls for cls in self.classes if cls not in selected_classes] if id else selected_classes

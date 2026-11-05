@@ -1,0 +1,38 @@
+{
+  "_comment": "Ship30 fixed ID/OOD split for TRIDENT experiments. Documented in the thesis appendix. ID:OOD = 14:16. Every super-category (tanker / cargo / passenger / military / leisure / special-purpose) appears in BOTH ID and OOD to preserve the fine-grained challenge.",
+  "_source_of_truth": "This JSON replaces the legacy randomly-sampled selected_14_classes.pkl. Class names match the keys of boat-29/meta/{train,test}.json.",
+  "id_classes": [
+    "Bulk carrier",
+    "Chemical tanker",
+    "Container ship",
+    "Cruise",
+    "Crude oil tanker",
+    "Destroyer",
+    "Fishing ships",
+    "Frigate",
+    "General cargo ship",
+    "LNG tanker",
+    "Monohull yacht",
+    "Passenger ship",
+    "Sailing catamaran",
+    "Tugboat"
+  ],
+  "ood_classes": [
+    "Aircraft carrier",
+    "Bitumen",
+    "Catamaran yacht",
+    "Firefighting",
+    "Fso",
+    "Heavy load carrier",
+    "Kayak",
+    "LPG tanker",
+    "Monohull sailboat",
+    "Oil products tanker",
+    "Passenger cargo ship",
+    "Passenger ro-ro ship",
+    "Reefer",
+    "Sailing trimaran",
+    "Submarine",
+    "Vehicles carrier"
+  ]
+}

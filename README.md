@@ -126,6 +126,25 @@ Set the dataset root via the `DATA_ROOT` environment variable (used by all scrip
 export DATA_ROOT=/path/to/datasets
 ```
 
+### Ship30 / Ship-14
+
+1. Organize your raw Ship30 images (one folder per category) into the expected layout:
+
+```bash
+python tools/prepare_ship30.py --raw /path/to/raw_ship30    # creates $DATA_ROOT/boat-29
+```
+
+2. The **fixed 14 ID / 16 OOD split** is documented in `data/Boat-14/id_classes.json` (every super-category appears in both ID and OOD). The evaluation dataloader reads this file; random re-sampling is no longer allowed.
+
+### Public benchmark datasets
+
+```bash
+bash scripts/download_datasets.sh ID    # CUB-200, Cars, Food-101, Pets
+bash scripts/download_datasets.sh OOD   # iNaturalist / SUN / Places / Texture (see MOS repo)
+```
+
+The ID class subsets (CUB-100 / Cars-98 / Food-50 / Pet-18) follow the EOE protocol; the fixed class lists are in `data/*.pkl` (copied from the [EOE repository](https://github.com/tmlr-group/EOE)).
+
 ---
 
 ## 🚀 Quick Start
