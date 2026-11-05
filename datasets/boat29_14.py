@@ -2,11 +2,26 @@ import json
 import os
 import pickle
 
-from dassl.data.datasets import DATASET_REGISTRY, DatasetBase
+from dassl.data.datasets import DATASET_REGISTRY, DatasetBase, Datum
 
 from .oxford_pets import OxfordPets
 from .boat29 import boat29
 from ._common import filter_items, fewshot_or_cache
+
+
+def to_display(name):
+    """'LNG_tanker' -> 'LNG tanker'.  Ship30 meta uses snake_case class keys,
+    which hurt CLIP text prompts ('a photo of a LNG_tanker'); keep the
+    canonical display names from id_classes.json instead."""
+    return name.replace("_", " ").strip()
+
+
+def relabel_display(items):
+    return [
+        Datum(impath=it.impath, label=it.label,
+              classname=to_display(it.classname))
+        for it in items
+    ]
 
 # Fixed, documented 14/16 ID/OOD split (data/Boat-14/id_classes.json).
 # The legacy selected_14_classes.pkl is generated from this JSON on first run
@@ -43,13 +58,36 @@ class boat14_ID(DatasetBase):
         trainval = boat29.read_meta(base, "train.json")
         test = boat29.read_meta(base, "test.json")
 
+        # Normalise snake_case class keys to display names BEFORE filtering,
+        # so CLIP text prompts use e.g. "LNG tanker" instead of "LNG_tanker".
+        trainval = relabel_display(trainval)
+        test = relabel_display(test)
+
         trainval = filter_items(trainval, id_classes)
         test = filter_items(test, id_classes)
         train, val = OxfordPets.split_trainval(trainval)
 
+        # Full 14-class label->classname map (BEFORE base/new subsampling),
+        # so the head always covers all 14 classes under base2new.
+        _seen = {}
+        for it in test:
+            _seen[it.label] = it.classname
+        full_classnames = [_seen[i] for i in range(len(_seen))]
+
+        subsample = getattr(cfg.DATASET, "SUBSAMPLE_CLASSES", "all")
+        if subsample == "base":
+            train, val = OxfordPets.subsample_classes(train, val, subsample="base")
+            tag = "boat14_ID_b2n"
+        else:
+            tag = "boat14_ID"
+
         train, val = fewshot_or_cache(
             self, train, val, cfg.DATASET.NUM_SHOTS, cfg.SEED,
-            os.path.join(base.dataset_dir, "split_fewshot"), "boat14_ID",
+            os.path.join(base.dataset_dir, "split_fewshot"), tag,
         )
 
         super().__init__(train_x=train, val=val, test=test)
+
+        if subsample == "base":
+            self._classnames = full_classnames
+            self._num_classes = len(full_classnames)

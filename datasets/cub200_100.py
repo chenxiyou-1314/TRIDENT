@@ -32,9 +32,27 @@ class cub100_ID(DatasetBase):
         val = filter_items(val, selected)
         test = filter_items(test, selected)
 
+        # Full 100-class label->classname map (BEFORE base/new subsampling),
+        # so the head always covers all 100 classes under base2new.
+        _seen = {}
+        for it in test:
+            _seen[it.label] = it.classname
+        full_classnames = [_seen[i] for i in range(len(_seen))]
+
+        subsample = getattr(cfg.DATASET, "SUBSAMPLE_CLASSES", "all")
+        if subsample == "base":
+            train, val = OxfordPets.subsample_classes(train, val, subsample="base")
+            tag = "cub100_ID_b2n"
+        else:
+            tag = "cub100_ID"
+
         train, val = fewshot_or_cache(
             self, train, val, cfg.DATASET.NUM_SHOTS, cfg.SEED,
-            os.path.join(dataset_dir, "split_fewshot"), "cub100_ID",
+            os.path.join(dataset_dir, "split_fewshot"), tag,
         )
 
         super().__init__(train_x=train, val=val, test=test)
+
+        if subsample == "base":
+            self._classnames = full_classnames
+            self._num_classes = len(full_classnames)
