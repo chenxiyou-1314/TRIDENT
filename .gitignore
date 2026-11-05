@@ -52,10 +52,13 @@ runs/
 *~
 
 # ============================================
-# Datasets (user-provided, do not commit)
+# Dataset DATA (user-provided images, do not commit)
+# NOTE: only ignore raw data under data/.
+# The `datasets/` CODE package (Dassl dataset registrations)
+# and `envisioned_classes/` (pre-generated LLM label JSONs)
+# MUST be committed for reproducibility.
 # ============================================
 data/
-datasets/
 
 # ============================================
 # IDE / Editor
@@ -85,5 +88,4 @@ Thumbs.db
 env/
 venv/
 ENV/
-envisioned_classes/
 openai/

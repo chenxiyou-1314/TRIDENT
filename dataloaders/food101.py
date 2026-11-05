@@ -157,8 +157,8 @@ if __name__ == "__main__":
             label_names.append(name.strip())
     print(label_names)
 
-    train_set = Food101(root = "/data/ccy/ccy-factory/datasets/id_data", split = "train", download = True)
-    test_set = Food101(root = "/data/ccy/ccy-factory/datasets/id_data", split = "test")
+    train_set = Food101(root = "./datasets", split = "train", download = True)
+    test_set = Food101(root = "./datasets", split = "test")
     print(f"train set len {len(train_set)}")
     print(f"test set len {len(test_set)}")
     from collections import Counter

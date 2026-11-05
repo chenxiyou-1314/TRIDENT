@@ -141,13 +141,13 @@ def examine_count(counter, name="train"):
 if __name__ == "__main__":
 
     label_names = []
-    with open('/data/ccy/ccy-factory/datasets/id_data/boat-29/meta/labels.txt') as f:
+    with open('./datasets/boat-29/meta/labels.txt') as f:
         for name in f:
             label_names.append(name.strip())
     print(label_names)
 
-    train_set = Boat29(root="/data/ccy/ccy-factory/datasets/id_data", split="train", download=True)
-    test_set = Boat29(root="/data/ccy/ccy-factory/datasets/id_data", split="test")
+    train_set = Boat29(root="./datasets", split="train", download=True)
+    test_set = Boat29(root="./datasets", split="test")
     print(f"train set len {len(train_set)}")
     print(f"test set len {len(test_set)}")
     from collections import Counter

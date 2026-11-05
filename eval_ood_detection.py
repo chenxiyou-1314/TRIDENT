@@ -117,8 +117,8 @@ def process_args():
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--in_dataset', default='cub100', type=str, choices=ALL_ID_DATASET,
                         help='in-distribution dataset')
-    parser.add_argument('--root_dir', default="/data/ccy/ccy-factory/datasets/id_data", type=str,
-                        help='root dir of datasets')
+    parser.add_argument('--root_dir', default=os.environ.get('DATA_ROOT', './datasets'), type=str,
+                        help='root dir of datasets (or set env DATA_ROOT)')
     # prompt pipeline
     parser.add_argument('--ensemble', action='store_true', default=False, help='CLIP text prompt engineering')
     parser.add_argument('--L', type=int, default=500,

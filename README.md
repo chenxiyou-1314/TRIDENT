@@ -120,7 +120,11 @@ Organize your datasets under a root directory (e.g., `/data/datasets`):
 └── imagenet/
 ```
 
-Set the dataset root in training/evaluation commands using `--root`.
+Set the dataset root via the `DATA_ROOT` environment variable (used by all scripts as the default), or pass `--root` / `--root_dir` explicitly in training/evaluation commands:
+
+```bash
+export DATA_ROOT=/path/to/datasets
+```
 
 ---
 
@@ -180,9 +184,11 @@ for i in 0 1 2; do
 done
 ```
 
-Or use the provided script:
+Or use the provided script (3 trials included):
 ```bash
-bash eval1.sh 500 0
+bash scripts/eval_fine_grained.sh ship14_ID 500 0        # <DATASET> <L> <IMAGE_LABEL> [LLM_MODEL]
+bash scripts/eval_far.sh EOE 500                          # classic OOD with Ship30 as ID
+bash scripts/eval_grid.sh ship14_ID                       # grid over L x image_label
 ```
 
 ---
@@ -232,13 +238,24 @@ Ship30/
 │
 ├── trainers/
 │   ├── dvr.py                  # Discriminative Visual Refinement (DVR) trainer
-│   └── zsclip.py               # Zero-shot CLIP baseline
+│   ├── zsclip.py               # Zero-shot CLIP baseline
+│   └── templates.py            # Prompt templates for training
 │
 ├── datasets/                   # Dataset definitions (Dassl format)
 ├── dataloaders/                # Custom data loaders
 ├── configs/
 │   ├── datasets/               # Dataset YAML configs
 │   └── trainers/DVR/           # Trainer hyperparameter configs
+│
+├── scripts/
+│   ├── train.sh                # Train DVR on one dataset
+│   ├── train_all.sh            # Train DVR on all fine-grained datasets
+│   ├── eval_fine_grained.sh    # Fine-grained OOD evaluation (3 trials)
+│   ├── eval_far.sh             # Classic (far) OOD evaluation
+│   └── eval_grid.sh            # Grid evaluation over L x image_label
+│
+├── tools/
+│   └── test_llm_vision.py      # Sanity check for LLM vision API
 │
 ├── utils/
 │   ├── generate_llm_class.py   # LLM OOD class generation (TOS)

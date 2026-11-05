@@ -172,8 +172,8 @@ def examine_count(counter, name = "train"):
 
 if __name__ == "__main__":
 
-    train_set = OxfordIIITPet(root = "/data/ccy/ccy-factory/datasets/id_data", split = "trainval", download = True)
-    test_set = OxfordIIITPet(root = "/data/ccy/ccy-factory/datasets/id_data", split = "test")
+    train_set = OxfordIIITPet(root = "./datasets", split = "trainval", download = True)
+    test_set = OxfordIIITPet(root = "./datasets", split = "test")
     print(f"train set len {len(train_set)}")
     print(f"test set len {len(test_set)}")
     from collections import Counter

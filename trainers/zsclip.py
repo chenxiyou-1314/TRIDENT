@@ -9,7 +9,7 @@ from clip import clip
 from clip.model import convert_weights
 
 from .taskres import load_clip_to_cpu
-from .imagenet_templates import IMAGENET_TEMPLATES, IMAGENET_TEMPLATES_SELECT
+from .templates import IMAGENET_TEMPLATES, IMAGENET_TEMPLATES_SELECT
 
 CUSTOM_TEMPLATES = {
     "OxfordPets": "a photo of a {}, a type of pet.",
