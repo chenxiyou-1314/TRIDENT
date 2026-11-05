@@ -9,10 +9,33 @@
 # ============================================================
 set -e
 
-echo "== [1/4] Python dependencies =="
+echo "== [0/5] Environment preflight =="
+python - <<'PY'
+import sys
+print("python :", sys.version.split()[0])
+try:
+    import torch
+    print("torch  :", torch.__version__, "| cuda:", torch.version.cuda)
+    print("gpu    :", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "NOT AVAILABLE")
+    if torch.cuda.is_available():
+        torch.zeros(1).cuda()  # fails on arch/cuda mismatch (e.g. sm_89 on cu117)
+        print("kernel : GPU matmul smoke test OK")
+except ImportError:
+    print("torch  : NOT INSTALLED - install torch matching your CUDA before continuing")
+try:
+    import numpy
+    if int(numpy.__version__.split(".")[0]) >= 2:
+        print(f"numpy  : {numpy.__version__} (>=2, will be downgraded by requirements)")
+    else:
+        print("numpy  :", numpy.__version__)
+except ImportError:
+    pass
+PY
+
+echo "== [1/5] Python dependencies =="
 pip install -r requirements.txt
 
-echo "== [2/4] Dassl framework =="
+echo "== [2/5] Dassl framework =="
 # NOTE: the Dassl.pytorch bundled with this repo is a TRIMMED copy
 # (the dassl/data module was removed). Install the full version:
 if [ ! -f Dassl.pytorch/dassl/data/datasets/__init__.py ]; then
@@ -21,7 +44,7 @@ if [ ! -f Dassl.pytorch/dassl/data/datasets/__init__.py ]; then
 fi
 pip install -e Dassl.pytorch/
 
-echo "== [3/4] CLIP weights (ViT-L/14, ~890MB) =="
+echo "== [3/5] CLIP weights (ViT-L/14, ~890MB) =="
 # Downloaded automatically on first use into ~/.cache/clip.
 # Pre-fetch here so the first training run does not stall:
 python - <<'PY'
@@ -33,7 +56,7 @@ except Exception as e:
     print(f"CLIP pre-fetch skipped ({e}); it will download on first run")
 PY
 
-echo "== [4/4] Sanity checks =="
+echo "== [4/5] Sanity checks =="
 python - <<'PY'
 import os
 os.environ.setdefault("DATA_ROOT", "./datasets")

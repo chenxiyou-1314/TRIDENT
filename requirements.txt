@@ -23,7 +23,10 @@ openai>=1.0.0
 fastapi-poe>=0.0.44
 
 # ---------- Scientific Computing ----------
-numpy>=1.23.0
+# NOTE: keep numpy < 2.0. On Python 3.9+ a bare `numpy>=1.23` resolves to
+# numpy 2.x, which breaks older transformers / timm / Dassl (np.float,
+# np.int removed; binary ABI mismatch).
+numpy>=1.23.0,<2.0
 scipy>=1.10.0
 scikit-learn>=1.2.0
 pandas>=1.5.0
