@@ -47,6 +47,12 @@ CUSTOM_TEMPLATES = {
     "Boat29_14": "a photo of a {}, a type of boat",
     "CUB200": "a photo of a {}, a type of bird",
     "CUB200_100": "a photo of a {}, a type of bird",
+    # --- new (renamed) fine-grained dataset keys used by this fork's configs ---
+    "pet18_ID": "a photo of a {}, a type of pet.",
+    "cub100_ID": "a photo of a {}, a type of bird",
+    "car98_ID": "a photo of a {}, a type of car.",
+    "food50_ID": "a photo of {}, a type of food.",
+    "boat14_ID": "a photo of a {}, a type of boat",
 }
 
 def load_clip_to_cpu(cfg):
