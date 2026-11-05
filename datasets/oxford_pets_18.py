@@ -34,9 +34,34 @@ class pet18_ID(DatasetBase):
         val = filter_items(val, selected)
         test = filter_items(test, selected)
 
+        # Full 18-class label->classname map (BEFORE any base/new subsampling).
+        # Needed so the classification head always covers all 18 classes even
+        # under base2new (where train_x is reduced to base classes only).
+        _seen = {}
+        for it in train:
+            _seen[it.label] = it.classname
+        full_classnames = [_seen[i] for i in range(len(_seen))]
+
+        # --- base2new protocol (CIL-style novel-class generalization) ---
+        # SUBSAMPLE_CLASSES == "base": train/val keep only the first half of
+        # classes (relabeled 0..m-1); the test set stays full (0..K-1) and the
+        # head below is forced back to all K classes.
+        subsample = getattr(cfg.DATASET, "SUBSAMPLE_CLASSES", "all")
+        if subsample == "base":
+            train, val = OxfordPets.subsample_classes(train, val, subsample="base")
+            tag = "pet18_ID_b2n"
+        else:
+            tag = "pet18_ID"
+
         train, val = fewshot_or_cache(
             self, train, val, cfg.DATASET.NUM_SHOTS, cfg.SEED,
-            os.path.join(dataset_dir, "split_fewshot"), "pet18_ID",
+            os.path.join(dataset_dir, "split_fewshot"), tag,
         )
 
         super().__init__(train_x=train, val=val, test=test)
+
+        if subsample == "base":
+            # Force the head / classnames back to the FULL 18 classes so that
+            # the learned residual text features generalize to unseen (new) classes.
+            self._classnames = full_classnames
+            self._num_classes = len(full_classnames)

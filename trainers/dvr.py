@@ -2,10 +2,12 @@ import os
 import os.path as osp
 from re import template
 
+import math
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
 from torch.cuda.amp import GradScaler, autocast
+from tqdm import tqdm
 
 from dassl.engine import TRAINER_REGISTRY, TrainerX
 from dassl.metrics import compute_accuracy
@@ -290,6 +292,65 @@ class DVR(TrainerX):
         input = input.to(self.device)
         label = label.to(self.device)
         return input, label
+
+    @torch.no_grad()
+    def test(self, split=None):
+        """Generic test pipeline + CIL-style base/new harmonic mean.
+
+        When DATASET.SUBSAMPLE_CLASSES == "base" (base2new protocol), the test
+        set keeps ALL classes while train_x is reduced to base classes. We split
+        the full-test predictions by class index:
+            base = labels in [0, m)   (seen during training)
+            new  = labels in [m, K)    (unseen / novel classes)
+        and report base acc, new acc and their harmonic mean (HM).
+        The HM is only computed on the full *test* split; val (base-only) keeps
+        the original overall accuracy so model selection is unaffected.
+        """
+        self.set_model_mode("eval")
+        self.evaluator.reset()
+
+        if split is None:
+            split = self.cfg.TEST.SPLIT
+
+        if split == "val" and self.val_loader is not None:
+            data_loader = self.val_loader
+        else:
+            split = "test"  # in case val_loader is None
+            data_loader = self.test_loader
+
+        print(f"Evaluate on the *{split}* set")
+
+        all_output, all_label = [], []
+        for batch_idx, batch in enumerate(tqdm(data_loader)):
+            input, label = self.parse_batch_test(batch)
+            output = self.model_inference(input)
+            self.evaluator.process(output, label)
+            all_output.append(output.cpu())
+            all_label.append(label.cpu())
+
+        results = self.evaluator.evaluate()
+        for k, v in results.items():
+            tag = f"{split}/{k}"
+            self.write_scalar(tag, v, self.epoch)
+
+        if split == "test" and getattr(self.cfg.DATASET, "SUBSAMPLE_CLASSES", "all") == "base":
+            n_class = self.model.prompt_learner.base_text_features.shape[0]
+            m = math.ceil(n_class / 2)
+            out = torch.cat(all_output, dim=0)
+            lab = torch.cat(all_label, dim=0)
+            pred = out.argmax(dim=1)
+            base_mask = lab < m
+            new_mask = lab >= m
+            base_acc = (pred[base_mask] == lab[base_mask]).float().mean().item() * 100.0
+            new_acc = (pred[new_mask] == lab[new_mask]).float().mean().item() * 100.0
+            hm = (2.0 * base_acc * new_acc / (base_acc + new_acc)) if (base_acc + new_acc) > 0 else 0.0
+            print(f">>> [base2new] base acc: {base_acc:.2f} | new acc: {new_acc:.2f} | HM: {hm:.2f}")
+            self.write_scalar(f"{split}/base_acc", base_acc, self.epoch)
+            self.write_scalar(f"{split}/new_acc", new_acc, self.epoch)
+            self.write_scalar(f"{split}/HM", hm, self.epoch)
+            return hm
+
+        return list(results.values())[0]
 
     def load_model(self, directory, epoch=None):
         if not directory:

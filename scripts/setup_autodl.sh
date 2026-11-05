@@ -44,6 +44,14 @@ if [ ! -f Dassl.pytorch/dassl/data/datasets/__init__.py ]; then
 fi
 pip install -e Dassl.pytorch/
 
+echo "== [2b/5] Patch Dassl defaults (SUBSAMPLE_CLASSES for base2new) =="
+# base2new evaluation needs cfg.DATASET.SUBSAMPLE_CLASSES; add it idempotently.
+if [ -f Dassl.pytorch/dassl/config/defaults.py ]; then
+  grep -q "SUBSAMPLE_CLASSES" Dassl.pytorch/dassl/config/defaults.py || \
+    sed -i '/_C.DATASET.ALL_AS_UNLABELED = False/a _C.DATASET.SUBSAMPLE_CLASSES = "all"' \
+      Dassl.pytorch/dassl/config/defaults.py
+fi
+
 echo "== [3/5] CLIP weights (ViT-L/14, ~890MB) =="
 # Downloaded automatically on first use into ~/.cache/clip.
 # Pre-fetch here so the first training run does not stall:
