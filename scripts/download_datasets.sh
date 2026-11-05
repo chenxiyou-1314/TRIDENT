@@ -5,7 +5,7 @@
 #   ID  = fine-grained ID datasets (CUB-200, Cars, Food-101, Pets)
 #   OOD = classic OOD test sets (iNaturalist/SUN/Places/Texture)
 # Downloads into $DATA_ROOT (default ./datasets).
-# ~50GB disk total. Run inside AutoDL (fast academic network).
+# ~50GB disk total. Run inside AutoDL / gpushare (fast academic network).
 # ============================================================
 set -e
 
@@ -20,22 +20,25 @@ cd "$DATA"
 if [ "$WHAT" = "ALL" ] || [ "$WHAT" = "ID" ]; then
 
   # --- CUB-200-2011 (~1.1GB) ---
+  # NOTE: Caltech data repository record id changed from w9d68-gec53 to
+  # 65de6-vp158 (old link now 404s). The record 302-redirects to a
+  # short-lived (~60s) S3 presigned URL, so -L is REQUIRED to follow it.
   if [ ! -d CUB_200_2011 ]; then
-    wget -q --show-progress https://data.caltech.edu/records/w9d68-gec53/files/CUB_200_2011.tgz
+    wget -c -q --show-progress -L "https://data.caltech.edu/records/65de6-vp158/files/CUB_200_2011.tgz"
     tar -xzf CUB_200_2011.tgz && rm CUB_200_2011.tgz
   fi
 
   # --- Food-101 (~5GB) ---
   if [ ! -d food-101 ]; then
-    wget -q --show-progress http://data.vision.ee.ethz.ch/cvl/food-101.tar.gz
+    wget -c -q --show-progress -L "http://data.vision.ee.ethz.ch/cvl/food-101.tar.gz"
     tar -xzf food-101.tar.gz && rm food-101.tar.gz
   fi
 
   # --- Oxford-IIIT Pet (~800MB) ---
   if [ ! -d oxford_pets ]; then
     mkdir -p oxford_pets && cd oxford_pets
-    wget -q --show-progress https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz
-    wget -q --show-progress https://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz
+    wget -c -q --show-progress -L "https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz"
+    wget -c -q --show-progress -L "https://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz"
     tar -xzf images.tar.gz && tar -xzf annotations.tar.gz
     rm images.tar.gz annotations.tar.gz && cd ..
   fi
